@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dukandar Directory & Finder</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--primary);
+    }
+
+    .btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .search-box {
+      font-size: 16px;
+      padding: 14px;
+      border: 2px solid var(--primary);
+      margin-bottom: 20px;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .shop-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .shop-card.related {
+      border-left: 4px solid var(--primary);
+      background-color: #f0f9ff;
+    }
+
+    .shop-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .shop-info {
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #475569;
+    }
+
+    .shop-info strong {
+      color: #1e293b;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background-color: #e0f2fe;
+      color: #0369a1;
+      font-size: 12px;
+      border-radius: 4px;
+      margin-top: 6px;
+      font-weight: 600;
+    }
+
+    .delete-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      float: right;
+    }
+
+    .section-label {
+      grid-column: 1 / -1;
+      font-size: 16px;
+      font-weight: 700;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      color: #334155;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🛒 Dukandar Directory Manager</h1>
+
+  <!-- Entry Form -->
+  <div class="card">
+    <h2>Naya Dukandar Add Karein</h2>
+    <form id="shopForm">
+      <div class="form-group">
+        <label for="shopName">Dukandar / Dukan Ka Naam *</label>
+        <input type="text" id="shopName" placeholder="e.g. Aslam General Store" required>
+      </div>
+
+      <div class="form-group">
+        <label for="area">Area / City (Kaha rahta ha) *</label>
+        <input type="text" id="area" placeholder="e.g. Saddar, Rawalpindi" required>
+      </div>
+
+      <div class="form-group">
+        <label for="road">Road / Landmark (Kis road per hai) *</label>
+        <input type="text" id="road" placeholder="e.g. Bank Road, Near Cheezious" required>
+      </div>
+
+      <div class="form-group">
+        <label for="nearby">Nazdeeki Doosre Dukandar (Pas konse dukandar hain)</label>
+        <input type="text" id="nearby" placeholder="e.g. Javed Medical Store ke samne">
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Ekhatfiya / Mazeed Details (Optional)</label>
+        <textarea id="notes" rows="2" placeholder="e.g. Phone number ya saman ki detail..."></textarea>
+      </div>
+
+      <button type="submit" class="btn">Save Dukandar Data</button>
+    </form>
+  </div>
+
+  <!-- Search Section -->
+  <div class="card">
+    <h2>Search Dukandar</h2>
+    <input type="text" id="searchInput" class="search-box" placeholder="Naam, Area, Road ya Nazdeeki Dukan se search karein...">
+    
+    <div id="resultsContainer" class="results-grid"></div>
+  </div>
+
+  <script>
+    // LocalStorage Key
+    const STORAGE_KEY = 'dukandar_directory_data';
+
+    // Load initial data
+    let shops = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    const shopForm = document.getElementById('shopForm');
+    const searchInput = document.getElementById('searchInput');
+    const resultsContainer = document.getElementById('resultsContainer');
+
+    // Add New Shop
+    shopForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const newShop = {
+        id: Date.now(),
+        name: document.getElementById('shopName').value.trim(),
+        area: document.getElementById('area').value.trim(),
+        road: document.getElementById('road').value.trim(),
+        nearby: document.getElementById('nearby').value.trim(),
+        notes: document.getElementById('notes').value.trim()
+      };
+
+      shops.push(newShop);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(shops));
+
+      shopForm.reset();
+      alert('Dukandar ka data kamyabi se save ho gaya hai!');
+      displayShops();
+    });
+
+    // Display / Search Shops Functionality
+    function displayShops() {
+      const query = searchInput.value.toLowerCase().trim();
+      resultsContainer.innerHTML = '';
+
+      if (shops.length === 0) {
+        resultsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Koi data save nahi hai.</p>';
+        return;
+      }
+
+      if (!query) {
+        // Show all shops if search is empty
+        shops.forEach(shop => {
+          resultsContainer.appendChild(createShopCard(shop));
+        });
+        return;
+      }
+
+      // Exact/Direct Matches (Name, Area, Road, Nearby)
+      const exactMatches = shops.filter(shop => 
+        shop.name.toLowerCase().includes(query) ||
+        shop.area.toLowerCase().includes(query) ||
+        shop.road.toLowerCase().includes(query) ||
+        shop.nearby.toLowerCase().includes(query)
+      );
+
+      if (exactMatches.length === 0) {
+        resultsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Is search se koi result nahi mila.</p>';
+        return;
+      }
+
+      // Collect Areas and Roads from exact matches to find "Related/Nearby" shops
+      const matchedAreas = new Set(exactMatches.map(s => s.area.toLowerCase()));
+      const matchedRoads = new Set(exactMatches.map(s => s.road.toLowerCase()));
+
+      // Related Matches (Same Area or Same Road, but not in exact matches)
+      const relatedMatches = shops.filter(shop => {
+        const isExact = exactMatches.some(e => e.id === shop.id);
+        if (isExact) return false;
+
+        const sameArea = matchedAreas.has(shop.area.toLowerCase());
+        const sameRoad = matchedRoads.has(shop.road.toLowerCase());
+        return sameArea || sameRoad;
+      });
+
+      // Render Direct Matches
+      resultsContainer.innerHTML += `<div class="section-label">Search Results (${exactMatches.length}):</div>`;
+      exactMatches.forEach(shop => {
+        resultsContainer.appendChild(createShopCard(shop));
+      });
+
+      // Render Related Matches (Same Road / Area)
+      if (relatedMatches.length > 0) {
+        resultsContainer.innerHTML += `<div class="section-label">Isi Road / Area ke Doosre Dukandar (${relatedMatches.length}):</div>`;
+        relatedMatches.forEach(shop => {
+          resultsContainer.appendChild(createShopCard(shop, true));
+        });
+      }
+    }
+
+    // Helper to generate Shop HTML Card
+    function createShopCard(shop, isRelated = false) {
+      const card = document.createElement('div');
+      card.className = `shop-card ${isRelated ? 'related' : ''}`;
+
+      card.innerHTML = `
+        <button class="delete-btn" onclick="deleteShop(${shop.id})">Delete</button>
+        <div class="shop-name">${escapeHtml(shop.name)}</div>
+        <div class="shop-info"><strong>📍 Area/Rehta Hai:</strong> ${escapeHtml(shop.area)}</div>
+        <div class="shop-info"><strong>🛣️ Road:</strong> ${escapeHtml(shop.road)}</div>
+        ${shop.nearby ? `<div class="shop-info"><strong>🏪 Pas konse dukandar:</strong> ${escapeHtml(shop.nearby)}</div>` : ''}
+        ${shop.notes ? `<div class="shop-info"><strong>📝 Notes:</strong> ${escapeHtml(shop.notes)}</div>` : ''}
+        ${isRelated ? `<span class="badge">Same Road / Area</span>` : ''}
+      `;
+
+      return card;
+    }
+
+    // Delete Shop
+    window.deleteShop = function(id) {
+      if (confirm('Kya aap is dukandar ka data delete karna chahte hain?')) {
+        shops = shops.filter(s => s.id !== id);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(shops));
+        displayShops();
+      }
+
+    // Basic HTML Escaping for security
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    // Search input event listener
+    searchInput.addEventListener('input', displayShops);
+
+    // Initial load
+    displayShops();
+  </script>
+</body>
+</html>

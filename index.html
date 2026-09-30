@@ -1,225 +1,333 @@
+
 <!DOCTYPE html>
 <html lang="ur" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dukandar Directory & Finder</title>
+  <title>Dukandar Directory & Smart Search</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
     :root {
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
       --bg: #f8fafc;
       --card-bg: #ffffff;
-      --text: #1e293b;
+      --text: #0f172a;
+      --text-light: #64748b;
       --border: #e2e8f0;
+      --accent-blue: #0284c7;
+      --accent-green: #16a34a;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
     body {
-      background-color: var(--bg);
+      background: #f1f5f9;
       color: var(--text);
-      padding: 20px;
-      max-width: 900px;
-      margin: 0 auto;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
     }
 
-    h1, h2 {
+    .app-container {
+      width: 100%;
+      max-width: 650px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .header-card {
+      background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+      color: white;
+      padding: 24px 20px;
+      border-radius: 20px;
       text-align: center;
-      margin-bottom: 20px;
-      color: #0f172a;
+      box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+    }
+
+    .header-card h1 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .header-card p {
+      font-size: 13px;
+      opacity: 0.9;
     }
 
     .card {
       background: var(--card-bg);
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      margin-bottom: 24px;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       border: 1px solid var(--border);
     }
 
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #1e293b;
+    }
+
     .form-group {
-      margin-bottom: 15px;
+      margin-bottom: 14px;
     }
 
     label {
       display: block;
-      margin-bottom: 5px;
+      font-size: 13px;
       font-weight: 600;
-      font-size: 14px;
+      margin-bottom: 6px;
+      color: #334155;
     }
 
     input, textarea {
       width: 100%;
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 15px;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
       outline: none;
-      transition: border 0.2s;
+      background: #f8fafc;
+      transition: all 0.2s;
     }
 
     input:focus, textarea:focus {
       border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
     }
 
-    .btn {
-      background-color: var(--primary);
+    .btn-save {
+      width: 100%;
+      background: var(--primary);
       color: white;
       border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      font-weight: 600;
-      border-radius: 8px;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
       cursor: pointer;
-      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       transition: background 0.2s;
     }
 
-    .btn:hover {
-      background-color: var(--primary-hover);
+    .btn-save:hover {
+      background: var(--primary-hover);
     }
 
-    .search-box {
+    /* Smart Search Input */
+    .search-wrapper {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .search-wrapper i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
       font-size: 16px;
-      padding: 14px;
-      border: 2px solid var(--primary);
-      margin-bottom: 20px;
     }
 
-    .results-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
+    .search-input {
+      padding-left: 44px !important;
+      font-size: 15px !important;
+      border: 2px solid var(--primary) !important;
+      background: #ffffff !important;
+    }
+
+    /* Shop Cards Grid */
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
 
     .shop-card {
-      background: var(--card-bg);
-      border-radius: 10px;
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
       padding: 16px;
-      border: 1px solid var(--border);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
       position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
-    .shop-card.related {
-      border-left: 4px solid var(--primary);
-      background-color: #f0f9ff;
+    .shop-card:hover {
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
     }
 
-    .shop-name {
-      font-size: 18px;
-      font-weight: 700;
+    .shop-card.related-card {
+      border-color: #38bdf8;
+      background: #f0f9ff;
+    }
+
+    .card-header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .shop-title {
+      font-size: 17px;
+      font-weight: 800;
       color: #0f172a;
-      margin-bottom: 8px;
     }
 
-    .shop-info {
-      font-size: 14px;
-      margin-bottom: 6px;
-      color: #475569;
-    }
-
-    .shop-info strong {
-      color: #1e293b;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      background-color: #e0f2fe;
+    .badge-related {
+      font-size: 11px;
+      font-weight: 700;
+      background: #e0f2fe;
       color: #0369a1;
-      font-size: 12px;
-      border-radius: 4px;
-      margin-top: 6px;
-      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid #bae6fd;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      color: #475569;
+      margin-bottom: 6px;
+    }
+
+    .info-row i {
+      width: 18px;
+      color: var(--primary);
+      text-align: center;
     }
 
     .delete-btn {
-      background: #ef4444;
-      color: white;
+      background: #fee2e2;
+      color: #dc2626;
       border: none;
-      padding: 4px 8px;
-      border-radius: 4px;
+      padding: 6px 10px;
+      border-radius: 8px;
       font-size: 12px;
+      font-weight: 700;
       cursor: pointer;
-      float: right;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    .section-label {
-      grid-column: 1 / -1;
-      font-size: 16px;
-      font-weight: 700;
-      margin-top: 15px;
-      margin-bottom: 5px;
-      color: #334155;
+    .delete-btn:hover {
+      background: #fca5a5;
+    }
+
+    .section-divider {
+      font-size: 13px;
+      font-weight: 800;
+      color: #64748b;
+      margin-top: 10px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .empty-msg {
+      text-align: center;
+      padding: 30px 10px;
+      color: #94a3b8;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
 
-  <h1>🛒 Dukandar Directory Manager</h1>
-
-  <!-- Entry Form -->
-  <div class="card">
-    <h2>Naya Dukandar Add Karein</h2>
-    <form id="shopForm">
-      <div class="form-group">
-        <label for="shopName">Dukandar / Dukan Ka Naam *</label>
-        <input type="text" id="shopName" placeholder="e.g. Aslam General Store" required>
-      </div>
-
-      <div class="form-group">
-        <label for="area">Area / City (Kaha rahta ha) *</label>
-        <input type="text" id="area" placeholder="e.g. Saddar, Rawalpindi" required>
-      </div>
-
-      <div class="form-group">
-        <label for="road">Road / Landmark (Kis road per hai) *</label>
-        <input type="text" id="road" placeholder="e.g. Bank Road, Near Cheezious" required>
-      </div>
-
-      <div class="form-group">
-        <label for="nearby">Nazdeeki Doosre Dukandar (Pas konse dukandar hain)</label>
-        <input type="text" id="nearby" placeholder="e.g. Javed Medical Store ke samne">
-      </div>
-
-      <div class="form-group">
-        <label for="notes">Ekhatfiya / Mazeed Details (Optional)</label>
-        <textarea id="notes" rows="2" placeholder="e.g. Phone number ya saman ki detail..."></textarea>
-      </div>
-
-      <button type="submit" class="btn">Save Dukandar Data</button>
-    </form>
-  </div>
-
-  <!-- Search Section -->
-  <div class="card">
-    <h2>Search Dukandar</h2>
-    <input type="text" id="searchInput" class="search-box" placeholder="Naam, Area, Road ya Nazdeeki Dukan se search karein...">
+  <div class="app-container">
     
-    <div id="resultsContainer" class="results-grid"></div>
+    <!-- Top Banner -->
+    <div class="header-card">
+      <h1><i class="fa-solid fa-store"></i> Dukandar Directory</h1>
+      <p>Aapka Saara Dukandar Data Safe & Smart Search Ke Sath</p>
+    </div>
+
+    <!-- Form Section -->
+    <div class="card">
+      <div class="section-title">
+        <i class="fa-solid fa-user-plus" style="color: var(--primary);"></i>
+        Naya Dukandar Add Karein
+      </div>
+      <form id="shopForm">
+        <div class="form-group">
+          <label><i class="fa-solid fa-shop"></i> Dukandar / Dukan Ka Naam *</label>
+          <input type="text" id="shopName" placeholder="e.g. Aslam General Store" required>
+        </div>
+
+        <div class="form-group">
+          <label><i class="fa-solid fa-location-dot"></i> Area / Shehar (Kaha rahta hai) *</label>
+          <input type="text" id="area" placeholder="e.g. Saddar, Rawalpindi" required>
+        </div>
+
+        <div class="form-group">
+          <label><i class="fa-solid fa-route"></i> Road / Chowk / Main Location *</label>
+          <input type="text" id="road" placeholder="e.g. Bank Road, Near Cheezious" required>
+        </div>
+
+        <div class="form-group">
+          <label><i class="fa-solid fa-people-arrows"></i> Nazdeeki Doosre Dukandar (Paas konse hain)</label>
+          <input type="text" id="nearby" placeholder="e.g. Javed Medical Store ke paas">
+        </div>
+
+        <div class="form-group">
+          <label><i class="fa-solid fa-phone"></i> Mobile No / Notes (Optional)</label>
+          <input type="text" id="notes" placeholder="e.g. 0300-1234567 ya Udhar Detail">
+        </div>
+
+        <button type="submit" class="btn-save">
+          <i class="fa-solid fa-floppy-disk"></i> Save Dukandar Data
+        </button>
+      </form>
+    </div>
+
+    <!-- Search & View Section -->
+    <div class="card">
+      <div class="section-title">
+        <i class="fa-solid fa-magnifying-glass" style="color: var(--primary);"></i>
+        Smart Search Directory
+      </div>
+
+      <div class="search-wrapper">
+        <i class="fa-solid fa-search"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Naam, Road, Area ya Paas waali dukan se search karein...">
+      </div>
+
+      <div id="resultsContainer" class="results-list"></div>
+    </div>
+
   </div>
 
   <script>
-    // LocalStorage Key
-    const STORAGE_KEY = 'dukandar_directory_data';
-
-    // Load initial data
+    const STORAGE_KEY = 'dukandar_directory_v2';
     let shops = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
     const shopForm = document.getElementById('shopForm');
     const searchInput = document.getElementById('searchInput');
     const resultsContainer = document.getElementById('resultsContainer');
 
-    // Add New Shop
-    shopForm.addEventListener('submit', (e) => {
+    // Add New Dukandar
+    shopForm.addEventListener('submit', function(e) {
       e.preventDefault();
 
       const newShop = {
@@ -231,33 +339,33 @@
         notes: document.getElementById('notes').value.trim()
       };
 
-      shops.push(newShop);
+      shops.unshift(newShop);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(shops));
 
       shopForm.reset();
-      alert('Dukandar ka data kamyabi se save ho gaya hai!');
+      alert('✅ Dukandar Ka Data Kamyabi Se Save Ho Gaya!');
       displayShops();
     });
 
-    // Display / Search Shops Functionality
+    // Display / Search Function
     function displayShops() {
       const query = searchInput.value.toLowerCase().trim();
       resultsContainer.innerHTML = '';
 
       if (shops.length === 0) {
-        resultsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Koi data save nahi hai.</p>';
+        resultsContainer.innerHTML = '<div class="empty-msg"><i class="fa-solid fa-folder-open" style="font-size:32px; margin-bottom:8px;"></i><br>Abhi tak koi dukandar save nahi hai. Upar se add karein!</div>';
         return;
       }
 
+      // If Search Bar is empty -> Show All
       if (!query) {
-        // Show all shops if search is empty
         shops.forEach(shop => {
           resultsContainer.appendChild(createShopCard(shop));
         });
         return;
       }
 
-      // Exact/Direct Matches (Name, Area, Road, Nearby)
+      // Filter Direct Matches
       const exactMatches = shops.filter(shop => 
         shop.name.toLowerCase().includes(query) ||
         shop.area.toLowerCase().includes(query) ||
@@ -266,74 +374,87 @@
       );
 
       if (exactMatches.length === 0) {
-        resultsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Is search se koi result nahi mila.</p>';
+        resultsContainer.innerHTML = '<div class="empty-msg"><i class="fa-solid fa-triangle-exclamation" style="font-size:30px; color:#f59e0b; margin-bottom:8px;"></i><br>Is naam, area ya road se koi dukandar nahi mila.</div>';
         return;
       }
 
-      // Collect Areas and Roads from exact matches to find "Related/Nearby" shops
-      const matchedAreas = new Set(exactMatches.map(s => s.area.toLowerCase()));
-      const matchedRoads = new Set(exactMatches.map(s => s.road.toLowerCase()));
+      // Collect matched areas & roads
+      const matchedAreas = exactMatches.map(s => s.area.toLowerCase());
+      const matchedRoads = exactMatches.map(s => s.road.toLowerCase());
 
-      // Related Matches (Same Area or Same Road, but not in exact matches)
+      // Find related shops on same road/area
       const relatedMatches = shops.filter(shop => {
         const isExact = exactMatches.some(e => e.id === shop.id);
         if (isExact) return false;
 
-        const sameArea = matchedAreas.has(shop.area.toLowerCase());
-        const sameRoad = matchedRoads.has(shop.road.toLowerCase());
+        const sameArea = matchedAreas.includes(shop.area.toLowerCase());
+        const sameRoad = matchedRoads.includes(shop.road.toLowerCase());
         return sameArea || sameRoad;
       });
 
-      // Render Direct Matches
-      resultsContainer.innerHTML += `<div class="section-label">Search Results (${exactMatches.length}):</div>`;
+      // Show Direct Matches
+      const directHeader = document.createElement('div');
+      directHeader.className = 'section-divider';
+      directHeader.innerText = `Matched Dukandar (${exactMatches.length})`;
+      resultsContainer.appendChild(directHeader);
+
       exactMatches.forEach(shop => {
-        resultsContainer.appendChild(createShopCard(shop));
+        resultsContainer.appendChild(createShopCard(shop, false));
       });
 
-      // Render Related Matches (Same Road / Area)
+      // Show Related Matches
       if (relatedMatches.length > 0) {
-        resultsContainer.innerHTML += `<div class="section-label">Isi Road / Area ke Doosre Dukandar (${relatedMatches.length}):</div>`;
+        const relatedHeader = document.createElement('div');
+        relatedHeader.className = 'section-divider';
+        relatedHeader.style.marginTop = '16px';
+        relatedHeader.innerText = `Isi Road / Area Ke Aur Dukandar (${relatedMatches.length})`;
+        resultsContainer.appendChild(relatedHeader);
+
         relatedMatches.forEach(shop => {
           resultsContainer.appendChild(createShopCard(shop, true));
         });
       }
     }
 
-    // Helper to generate Shop HTML Card
+    // Card Builder
     function createShopCard(shop, isRelated = false) {
       const card = document.createElement('div');
-      card.className = `shop-card ${isRelated ? 'related' : ''}`;
+      card.className = `shop-card ${isRelated ? 'related-card' : ''}`;
 
       card.innerHTML = `
-        <button class="delete-btn" onclick="deleteShop(${shop.id})">Delete</button>
-        <div class="shop-name">${escapeHtml(shop.name)}</div>
-        <div class="shop-info"><strong>📍 Area/Rehta Hai:</strong> ${escapeHtml(shop.area)}</div>
-        <div class="shop-info"><strong>🛣️ Road:</strong> ${escapeHtml(shop.road)}</div>
-        ${shop.nearby ? `<div class="shop-info"><strong>🏪 Pas konse dukandar:</strong> ${escapeHtml(shop.nearby)}</div>` : ''}
-        ${shop.notes ? `<div class="shop-info"><strong>📝 Notes:</strong> ${escapeHtml(shop.notes)}</div>` : ''}
-        ${isRelated ? `<span class="badge">Same Road / Area</span>` : ''}
+        <div class="card-header-flex">
+          <div class="shop-title">${escapeHtml(shop.name)}</div>
+          ${isRelated ? '<span class="badge-related"><i class="fa-solid fa-link"></i> Same Area/Road</span>' : ''}
+          <button class="delete-btn" onclick="deleteShop(${shop.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+        </div>
+
+        <div class="info-row"><i class="fa-solid fa-location-dot"></i> <strong>Area:</strong> ${escapeHtml(shop.area)}</div>
+        <div class="info-row"><i class="fa-solid fa-route"></i> <strong>Road:</strong> ${escapeHtml(shop.road)}</div>
+        ${shop.nearby ? `<div class="info-row"><i class="fa-solid fa-people-arrows"></i> <strong>Paas Dukan:</strong> ${escapeHtml(shop.nearby)}</div>` : ''}
+        ${shop.notes ? `<div class="info-row"><i class="fa-solid fa-note-sticky"></i> <strong>Detail/Phone:</strong> ${escapeHtml(shop.notes)}</div>` : ''}
       `;
 
       return card;
     }
 
-    // Delete Shop
+    // Delete Dukandar
     window.deleteShop = function(id) {
       if (confirm('Kya aap is dukandar ka data delete karna chahte hain?')) {
         shops = shops.filter(s => s.id !== id);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(shops));
         displayShops();
       }
+    };
 
-    // Basic HTML Escaping for security
     function escapeHtml(str) {
+      if (!str) return '';
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    // Search input event listener
+    // Realtime Search Listener
     searchInput.addEventListener('input', displayShops);
 
-    // Initial load
+    // Initial Load
     displayShops();
   </script>
 </body>
